@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Product\Request" />
+    <Folder Include="Product\Response" />
+  </ItemGroup>
+
 </Project>

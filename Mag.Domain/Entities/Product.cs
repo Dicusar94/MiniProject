@@ -18,7 +18,8 @@ public class Product
     public double InitialPrice { get; private set; }
     public int ValidityDays { get; private set; }
     public bool IsExpiredValidityDays => GetIsExpiredValidityDays();
-    public bool IsExpiredForOneMonth => GetIsExpiredForOneMonth();
+    public bool IsOneMonthBeforeExpired => GetIsExpiredForOneMonth();
+    public double Discount => GetDiscountRatio();
 
     #endregion
 
@@ -32,18 +33,55 @@ public class Product
     
     public static Product Create(string name, double initialPrice, int validityDays)
     {
-        return new Product
-        {
-            Name = name,
-            InitialPrice = initialPrice,
-            ValidityDays = validityDays
-        };
+        var product = new Product { Name = name };
+        product.Name = name;
+        product.SetInitialPrice(initialPrice).SetValidityDays(validityDays);
+        return product;
+    }
+
+    public void Update(Product product)
+    {
+        Id = product.Id;
+        Name = product.Name;
+        SetInitialPrice(product.InitialPrice);
+        SetValidityDays(product.ValidityDays);
     }
 
     #endregion
 
 
     #region LocalMethods
+
+    public Product SetInitialPrice(double price)
+    {
+        if (price <= 0)
+        {
+            const string errorMessage = $"{nameof(InitialPrice)} must be greater than 0";
+            throw new InvalidOperationException(errorMessage);
+        }
+
+        InitialPrice = price;
+        return this;
+    }
+
+    public Product SetValidityDays(int validityDays)
+    {
+        if (validityDays <= 0)
+        {
+            const string errorMessage = $"{nameof(validityDays)} must be greater than 0";
+            throw new InvalidOperationException(errorMessage);
+        }
+
+        ValidityDays = validityDays;
+        return this;
+    }
+
+    public Product SetCreationDate(DateTime dateTime)
+    {
+        Date = dateTime;
+        return this;
+    }
+    
     private double GetPrice()
     {
         var discountRatio = GetDiscountRatio();
@@ -53,13 +91,13 @@ public class Product
 
     private double GetDiscountRatio()
     {
-        var is20PercentDiscountDays = ValidityDays * 0.5;
-        var is50PercentDiscountDays = ValidityDays * 0.25;
+        var is20PercentDate = Date.AddDays(ValidityDays * 0.5);
+        var is50PercentDate = Date.AddDays(ValidityDays * 0.75);
 
-        if (_remainValidityDays >= is20PercentDiscountDays && _remainValidityDays < is50PercentDiscountDays)
+        if (DateTime.Now > is20PercentDate && DateTime.Now < is50PercentDate)
             return 0.2;
         
-        if (_remainValidityDays >= is50PercentDiscountDays && _remainValidityDays < 0)
+        if (DateTime.Now >= is50PercentDate && DateTime.Now <= _expirationDate)
         {
             return 0.5;
         }
@@ -76,9 +114,7 @@ public class Product
     
     private bool GetIsExpiredForOneMonth()
     {
-        if (!IsExpiredValidityDays) return false;
-        var oneMonthDateExpiration = _expirationDate.AddMonths(1);
-        return DateTime.Now <= oneMonthDateExpiration;
+        return _remainValidityDays <= 30;
     }
 
     private bool GetIsExpiredValidityDays()

@@ -1,9 +1,14 @@
+using Mag.Application;
+using Mag.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-
+    builder.Services
+        .AddApplication()
+        .AddInfrastructure();
 }
 
 var app = builder.Build();
@@ -15,7 +20,7 @@ var app = builder.Build();
     }
 
     app.UseHttpsRedirection();
-    app.UseAuthorization();
+    // app.UseAuthorization();
     app.MapControllers();
     app.Run();
 }
