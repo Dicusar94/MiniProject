@@ -26,7 +26,7 @@ public class ProductRepository : IProductRepository
 
     public Product? GetById(string id)
     {
-        return Products.FirstOrDefault(x => x.Id == id);
+        return Products.Find(x => x.Id == id);
     }
 
     public List<Product>? Filter(Func<Product, bool> predicate)
@@ -42,13 +42,6 @@ public class ProductRepository : IProductRepository
     public void AddRange(IList<Product> products)
     {
         Products.AddRange(products);
-    }
-
-    public Product Update(string id, Product entity)
-    {
-        var product = Products.First(x => x.Id == id);
-        product.Update(entity);
-        return product;
     }
 
     public void Delete(Product entity)

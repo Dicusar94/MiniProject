@@ -9,6 +9,5 @@ public interface IProductRepository
     List<Product>? Filter(Func<Product, bool> predicate);
     void Add(Product entity);
     void AddRange(IList<Product> products);
-    Product Update(string id, Product entity);
     void Delete(Product entity);
 }

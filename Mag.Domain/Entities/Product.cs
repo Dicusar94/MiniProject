@@ -1,17 +1,16 @@
 namespace Mag.Domain.Entities;
 
-public class Product
+public sealed class Product
 {
     #region Fields
-    private int _remainValidityDays => GetRemainingValidityDays();
-    private DateTime _expirationDate => Date.AddDays(ValidityDays);
-    
+    private int RemainValidityDays => GetRemainingValidityDays();
+    private DateTime ExpirationDate => Date.AddDays(ValidityDays);
+
     #endregion
 
-
     #region Properties
-    
-    public string Id { get; private set; } = Guid.NewGuid().ToString();
+
+    public string Id { get; } = Guid.NewGuid().ToString();
     public string? Name { get; private set; }
     public DateTime Date { get; private set; } = DateTime.Now;
     public double Price => GetPrice();
@@ -23,14 +22,13 @@ public class Product
 
     #endregion
 
-
     #region Ctors
     private Product() {}
 
     #endregion
 
     #region FactoryMethods
-    
+
     public static Product Create(string name, double initialPrice, int validityDays)
     {
         var product = new Product { Name = name };
@@ -39,16 +37,14 @@ public class Product
         return product;
     }
 
-    public void Update(Product product)
+    public void Update(string name, double initialPrice, int validityDays )
     {
-        Id = product.Id;
-        Name = product.Name;
-        SetInitialPrice(product.InitialPrice);
-        SetValidityDays(product.ValidityDays);
+        Name = name;
+        SetInitialPrice(initialPrice);
+        SetValidityDays(validityDays);
     }
 
     #endregion
-
 
     #region LocalMethods
 
@@ -81,7 +77,7 @@ public class Product
         Date = dateTime;
         return this;
     }
-    
+
     private double GetPrice()
     {
         var discountRatio = GetDiscountRatio();
@@ -96,13 +92,13 @@ public class Product
 
         if (DateTime.Now > is20PercentDate && DateTime.Now < is50PercentDate)
             return 0.2;
-        
-        if (DateTime.Now >= is50PercentDate && DateTime.Now <= _expirationDate)
+
+        if (DateTime.Now >= is50PercentDate && DateTime.Now <= ExpirationDate)
         {
             return 0.5;
         }
 
-        return _remainValidityDays < 0 ? 1 : 0;
+        return RemainValidityDays < 0 ? 1 : 0;
     }
 
     private int GetRemainingValidityDays()
@@ -111,17 +107,16 @@ public class Product
         var dateDiff = (expirationDate - DateTime.Now).TotalDays;
         return (int)dateDiff;
     }
-    
+
     private bool GetIsExpiredForOneMonth()
     {
-        return _remainValidityDays <= 30;
+        return RemainValidityDays <= 30;
     }
 
     private bool GetIsExpiredValidityDays()
     {
-        return _remainValidityDays < 0;
+        return RemainValidityDays < 0;
     }
 
     #endregion
-    
 }

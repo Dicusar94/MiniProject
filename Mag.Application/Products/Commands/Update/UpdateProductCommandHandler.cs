@@ -12,7 +12,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     {
         _productRepository = productRepository;
     }
-    
+
     public Task<Product> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         var product = _productRepository.GetById(request.Id);
@@ -23,8 +23,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             throw new InvalidOperationException(errorMessage);
         }
 
-        var newProduct = Product.Create(product.Name!, product.InitialPrice, product.ValidityDays);
-        var updateProduct = _productRepository.Update(request.Id, newProduct);
-        return Task.FromResult(updateProduct);
+        product.Update(request.Name, request.InitialPrice, request.ValidityDays);
+        return Task.FromResult(product);
     }
 }

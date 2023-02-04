@@ -54,40 +54,37 @@ public class Products : ControllerBase
             throw;
         }
     }
-    
-    
+
     [HttpGet("/discounted/50")]
     public IActionResult GetDiscounted50()
     {
         try
         {
-            var products = _productRepository.Filter(x => x.Discount == 0.5)
+            var products = _productRepository.Filter(x => x.Discount == 0.5)!
                 .OrderBy(x => x.InitialPrice);
             return Ok(products);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
-    
+
     [HttpGet("/discounted/20")]
     public IActionResult GetDiscounted20()
     {
         try
         {
-            var products = _productRepository.Filter(x => x.Discount == 0.2)
+            var products = _productRepository.Filter(x => x.Discount == 0.2)!
                 .OrderBy(x => x.InitialPrice);
             return Ok(products);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
-    
+
     [HttpGet("/validity/1month")]
     public IActionResult GetValidity1Month()
     {
@@ -98,11 +95,10 @@ public class Products : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
-    
+
     [HttpGet("/withoutexpired")]
     public IActionResult GetWithoutExpired()
     {
@@ -113,8 +109,7 @@ public class Products : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
@@ -156,13 +151,13 @@ public class Products : ControllerBase
             {
                 throw new InvalidOperationException("product not found!");
             }
-            
+
             _productRepository.Delete(product);
             return Ok();
         }
         catch (Exception e)
         {
-            return BadRequest();
+            return BadRequest(e.Message);
         }
     }
 }
