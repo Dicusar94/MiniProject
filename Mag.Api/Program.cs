@@ -1,3 +1,4 @@
+using Mag.Api;
 using Mag.Application;
 using Mag.Infrastructure;
 
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services
         .AddApplication()
         .AddInfrastructure();
+    builder.Services.AddCustomCors("AllowAllOrigins");
 }
 
 var app = builder.Build();
@@ -19,7 +21,8 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    app.UseCors("AllowAllOrigins");
+    // app.UseHttpsRedirection();
     // app.UseAuthorization();
     app.MapControllers();
     app.Run();
