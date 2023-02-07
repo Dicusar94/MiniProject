@@ -11,9 +11,9 @@ public class ProductRepository : IProductRepository
     {
         Products = new List<Product>
         {
-            Product.Create("20Discount", 10, 20).SetCreationDate(DateTime.Now.AddDays(-11)),
-            Product.Create("50Discount", 14, 30).SetCreationDate(DateTime.Now.AddDays(-25)),
-            Product.Create("0Price", 15, 40).SetCreationDate(DateTime.Now.AddDays(-50)),
+            Product.Create("20Discount", 10, 20, DateTime.Now.AddDays(-11)),
+            Product.Create("50Discount", 14, 30, DateTime.Now.AddDays(-25)),
+            Product.Create("0Price", 15, 40, DateTime.Now.AddDays(-50)),
             Product.Create("AtLeastOneMonthValidity", 16, 25),
             Product.Create("Other2", 17, 60),
         };
@@ -26,7 +26,7 @@ public class ProductRepository : IProductRepository
 
     public Product? GetById(string id)
     {
-        return Products.Find(x => x.Id == id);
+        return Products.Find(x => x.Id.ToString() == id);
     }
 
     public List<Product>? Filter(Func<Product, bool> predicate)
