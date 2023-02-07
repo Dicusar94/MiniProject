@@ -16,7 +16,7 @@ public sealed class ProductAvailability
     public static ProductAvailability Create(DateTime productionDate, int daysOfValidity)
     {
         if (daysOfValidity < 0)
-            throw new InvalidOperationException($"{nameof(DaysOfValidity)} must be greater than 0");            
+            throw new InvalidOperationException($"{nameof(DaysOfValidity)} must be greater than 0");
 
         var expirationDate = productionDate.AddDays(daysOfValidity).Date;
         return new ProductAvailability(

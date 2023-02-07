@@ -17,7 +17,7 @@ public sealed class ProductDiscount : ValueObject
     public bool IsFiftyPercent { get; }
     public bool IsOneHundredPercent { get; }
 
-    private ProductDiscount(int daysOfValidity, DateTime productionDate)
+    private ProductDiscount(DateTime productionDate, int daysOfValidity)
     {
         _expirationDate = productionDate.AddDays(daysOfValidity);
         _twentyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.5);
@@ -29,9 +29,9 @@ public sealed class ProductDiscount : ValueObject
         IsOneHundredPercent = Percent == OneHundredPercent;
     }
 
-    public static ProductDiscount Create(int daysOfValidity, DateTime productionDate)
+    public static ProductDiscount Create(DateTime productionDate, int daysOfValidity)
     {
-        return new ProductDiscount(daysOfValidity, productionDate);
+        return new ProductDiscount(productionDate, daysOfValidity);
     }
 
     private double GetDiscountPercent()

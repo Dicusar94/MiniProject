@@ -1,7 +1,7 @@
 using Mag.Domain.Common.Models;
 using Mag.Domain.ProductAggregate.ValueObjects;
 
-namespace Mag.Domain.Entities;
+namespace Mag.Domain.ProductAggregate.Entities;
 
 public sealed class Product : AggregateRoot<ProductId>
 {
@@ -23,22 +23,14 @@ public sealed class Product : AggregateRoot<ProductId>
         Availability = availability;
         Pricing = pricing;
         Discount = discount;
-    } 
-
-    public static Product Create(string name, double stockPrice, int daysOfValidity)
-    {
-        return Create(
-            name,
-            stockPrice,
-            daysOfValidity,
-            DateTime.UtcNow.Date);
     }
 
-    public static Product Create(string name, double stockPrice, int daysOfValidity, DateTime productionDate)
+    public static Product Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
     {
-        var discount = ProductDiscount.Create(daysOfValidity, productionDate);
+        var prodDate = productionDate ?? DateTime.UtcNow.Date;
+        var discount = ProductDiscount.Create(prodDate, daysOfValidity);
         var pricing = ProductPrice.Create(stockPrice, discount);
-        var availability = ProductAvailability.Create(productionDate, daysOfValidity);
+        var availability = ProductAvailability.Create(prodDate, daysOfValidity);
 
         return new Product(
             ProductId.CreateUniquer(),
@@ -46,5 +38,18 @@ public sealed class Product : AggregateRoot<ProductId>
             availability,
             pricing,
             discount);
+    }
+
+    public void Update(string name, double stockPrice, int daysOfValidity, DateTime? productionDate)
+    {
+        var prodDate = productionDate ?? DateTime.UtcNow.Date;
+        var availability = ProductAvailability.Create(prodDate, daysOfValidity);
+        var discount = ProductDiscount.Create(prodDate, daysOfValidity);
+        var pricing = ProductPrice.Create(stockPrice, Discount);
+
+        Name = name;
+        Discount = discount;
+        Pricing = pricing;
+        Availability = availability;
     }
 }

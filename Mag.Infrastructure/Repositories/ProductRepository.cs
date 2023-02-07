@@ -1,5 +1,6 @@
-using Mag.Application.Common.Interfaces;
-using Mag.Domain.Entities;
+using Mag.Application.Common.Interfaces.Persistence;
+using Mag.Domain.ProductAggregate.Entities;
+using Mag.Domain.ProductAggregate.ValueObjects;
 
 namespace Mag.Infrastructure.Repositories;
 
@@ -24,9 +25,9 @@ public class ProductRepository : IProductRepository
         return Products;
     }
 
-    public Product? GetById(string id)
+    public Product? GetById(Guid id)
     {
-        return Products.Find(x => x.Id.ToString() == id);
+        return Products.Find(x => x.Id.Value == id);
     }
 
     public List<Product>? Filter(Func<Product, bool> predicate)
@@ -34,9 +35,10 @@ public class ProductRepository : IProductRepository
         return Products.Where(predicate).ToList();
     }
 
-    public void Add(Product entity)
+    public Product Add(Product entity)
     {
         Products.Add(entity);
+        return entity;
     }
 
     public void AddRange(IList<Product> products)
@@ -44,8 +46,22 @@ public class ProductRepository : IProductRepository
         Products.AddRange(products);
     }
 
-    public void Delete(Product entity)
+    public Product Update(Product entity)
+    {
+        var product = Products.Find(x => x == entity);
+
+        product?.Update(
+            entity.Name,
+            entity.Pricing.Stock,
+            entity.Availability.DaysOfValidity,
+            entity.Availability.ProductionDate);
+
+        return product!;
+    }
+
+    public ProductId Delete(Product entity)
     {
         Products.Remove(entity);
+        return entity.Id;
     }
 }

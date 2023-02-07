@@ -1,4 +1,5 @@
 using Mag.Application.Common.Interfaces;
+using Mag.Application.Common.Interfaces.Persistence;
 using Mag.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 

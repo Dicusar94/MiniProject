@@ -1,12 +1,13 @@
-using Mag.Domain.Entities;
+using Mag.Application.Products.Common;
 using MediatR;
 
 namespace Mag.Application.Products.Commands.Update;
 
-public class UpdateProductCommand : IRequest<Product>
+public class UpdateProductCommand : IRequest<ProductResult>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public string Name { get; set; } = null!;
-    public double InitialPrice { get; set; }
-    public int ValidityDays { get; set; }
+    public double StockPrice { get; set; }
+    public int DaysOfValidity { get; set; }
+    public DateTime? ProductionDate { get; set; }
 }

@@ -1,29 +1,37 @@
-using Mag.Application.Common.Interfaces;
-using Mag.Domain.Entities;
+using Mag.Application.Common.Interfaces.Persistence;
+using Mag.Application.Products.Common;
+using Mag.Domain.ProductAggregate.Entities;
+using MapsterMapper;
 using MediatR;
 
 namespace Mag.Application.Products.Commands.Update;
 
-public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Product>
+public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductResult>
 {
     private readonly IProductRepository _productRepository;
+    private readonly IMapper _mapper;
 
-    public UpdateProductCommandHandler(IProductRepository productRepository)
+    public UpdateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
     {
         _productRepository = productRepository;
+        _mapper = mapper;
     }
 
-    public Task<Product> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+    public Task<ProductResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         var product = _productRepository.GetById(request.Id);
 
         if (product is null)
-        {
-            const string errorMessage = $"{nameof(Product)} not found!";
-            throw new InvalidOperationException(errorMessage);
-        }
+            throw new InvalidOperationException($"{nameof(Product)} not found!");
 
-        product.Update(request.Name, request.InitialPrice, request.ValidityDays);
-        return Task.FromResult(product);
+        product.Update(
+            request.Name,
+            request.StockPrice,
+            request.DaysOfValidity,
+            request.ProductionDate);
+
+        var result = _mapper.Map<ProductResult>(product);
+
+        return Task.FromResult(result);
     }
 }
