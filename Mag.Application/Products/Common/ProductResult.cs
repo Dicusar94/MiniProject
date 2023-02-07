@@ -1,11 +1,14 @@
 namespace Mag.Application.Products.Common;
 
 public record  ProductResult(
+    ProductIdResult Id,
     string Name,
     ProductAvailabilityResult Availability,
     ProductPriceResult Pricing,
     ProductDiscountResult Discount
 );
+
+public record ProductIdResult(Guid Value);
 
 public record ProductAvailabilityResult(
     DateTime ProductionDate,

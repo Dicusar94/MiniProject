@@ -1,6 +1,13 @@
-using Mag.Application.Common.Interfaces;
+using Mag.Api.Controllers.Base;
 using Mag.Application.Products.Commands.Create;
+using Mag.Application.Products.Commands.Delete;
 using Mag.Application.Products.Commands.Update;
+using Mag.Application.Products.Queries.GetAll;
+using Mag.Application.Products.Queries.GetById;
+using Mag.Contracts.Product.Common;
+using Mag.Contracts.Product.Request;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,156 +15,89 @@ namespace Mag.Api.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class Products : ControllerBase
+public class Products : BaseController
 {
-    // private readonly IMediator _mediator;
-    // private readonly IProductRepository _productRepository;
+    public Products(IMediator mediator, IMapper mapper) : base(mediator, mapper)
+    {
+    }
 
-    // public Products(IMediator mediator, IProductRepository productRepository)
-    // {
-    //     _mediator = mediator;
-    //     _productRepository = productRepository;
-    // }
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsRequest filter)
+    {
+        try
+        {
+            var query = Mapper.Map<GetAllProductsQuery>(filter);
+            var result = await Mediator.Send(query);
+            var response = result.Select(Mapper.Map<ProductResponse>);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    // [HttpGet]
-    // public IActionResult GetAll()
-    // {
-    //     var result = _productRepository.GetAll();
-    //     return Ok(result);
-    // }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        try
+        {
+            var query = new GetProductByIdQuery(id);
+            var result = await Mediator.Send(query);
+            var response = Mapper.Map<ProductResponse>(result);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    // [HttpGet("{id}")]
-    // public IActionResult GetById(string id)
-    // {
-    //     try
-    //     {
-    //         var result = _productRepository.GetById(id);
-    //         return Ok(result);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateProductRequest request)
+    {
+        try
+        {
+            var command = Mapper.Map<AddProductCommand>(request);
+            var result = await Mediator.Send(command);
+            var response = Mapper.Map<ProductResponse>(result);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    // [HttpGet("/expired")]
-    // public IActionResult GetExpired()
-    // {
-    //     try
-    //     {
-    //         var products = _productRepository.Filter(x => x.IsExpiredValidityDays);
-    //         return Ok(products);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //         throw;
-    //     }
-    // }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id,  UpdateProductRequest request)
+    {
+        try
+        {
+            var command = (id, request).Adapt<UpdateProductCommand>();
+            var result = await Mediator.Send(command);
+            var response = Mapper.Map<ProductResponse>(result);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    // [HttpGet("/discounted/50")]
-    // public IActionResult GetDiscounted50()
-    // {
-    //     try
-    //     {
-    //         var products = _productRepository.Filter(x => x.Discountt == 0.5)!
-    //             .OrderBy(x => x.InitialPrice);
-    //         return Ok(products);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpGet("/discounted/20")]
-    // public IActionResult GetDiscounted20()
-    // {
-    //     try
-    //     {
-    //         var products = _productRepository.Filter(x => x.Discountt == 0.2)!
-    //             .OrderBy(x => x.InitialPrice);
-    //         return Ok(products);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpGet("/validity/1month")]
-    // public IActionResult GetValidity1Month()
-    // {
-    //     try
-    //     {
-    //         var products = _productRepository.Filter(x => x.IsOneMonthBeforeExpired);
-    //         return Ok(products);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpGet("/withoutexpired")]
-    // public IActionResult GetWithoutExpired()
-    // {
-    //     try
-    //     {
-    //         var products = _productRepository.Filter(x => !x.IsExpiredValidityDays);
-    //         return Ok(products);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpPost]
-    // public IActionResult Create(AddProductCommand model)
-    // {
-    //     try
-    //     {
-    //         _ = _mediator.Send(model).Result;
-    //         return Ok();
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpPut]
-    // public IActionResult Update(UpdateProductCommand model)
-    // {
-    //     try
-    //     {
-    //         var result = _mediator.Send(model).Result;
-    //         return Ok(result);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
-
-    // [HttpDelete]
-    // public IActionResult Delete(string id)
-    // {
-    //     try
-    //     {
-    //         var product = _productRepository.GetById(id);
-    //         if (product is null)
-    //         {
-    //             throw new InvalidOperationException("product not found!");
-    //         }
-
-    //         _productRepository.Delete(product);
-    //         return Ok();
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return BadRequest(e.Message);
-    //     }
-    // }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        try
+        {
+            var command = new DeleteProductCommand(id);
+            var result = await Mediator.Send(command);
+            var response = Mapper.Map<ProductIdResponse>(result);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }
