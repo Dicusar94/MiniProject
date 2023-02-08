@@ -23,9 +23,9 @@ public sealed class ProductDiscount : ValueObject
 
     private ProductDiscount(DateTime productionDate, int daysOfValidity)
     {
-        _expirationDate = productionDate.AddDays(daysOfValidity);
-        _twentyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.5);
-        _fiftyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.75);
+        _expirationDate = productionDate.AddDays(daysOfValidity).Date;
+        _twentyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.5).Date;
+        _fiftyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.75).Date;
 
         Percent = GetDiscountPercent();
         IsTwentyPercent = Percent == TwentyPercent;
@@ -42,10 +42,10 @@ public sealed class ProductDiscount : ValueObject
     {
         var today = DateTime.UtcNow.Date;
 
-        if(today >= _twentyPercentDiscountDate && today < _fiftyPercentDiscountDate)
+        if (today >= _twentyPercentDiscountDate && today < _fiftyPercentDiscountDate)
             return TwentyPercent;
 
-        if (today >= _fiftyPercentDiscountDate)
+        if (today >= _fiftyPercentDiscountDate && today < _expirationDate)
             return FiftyPercent;
 
         if (today >= _expirationDate)

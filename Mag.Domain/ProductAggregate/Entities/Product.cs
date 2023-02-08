@@ -32,9 +32,9 @@ public sealed class Product : AggregateRoot<ProductId>
     public static Product Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
     {
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
-        var discount = ProductDiscount.Create(prodDate, daysOfValidity);
+        var discount = ProductDiscount.Create(prodDate.Date, daysOfValidity);
         var pricing = ProductPrice.Create(stockPrice, discount);
-        var availability = ProductAvailability.Create(prodDate, daysOfValidity);
+        var availability = ProductAvailability.Create(prodDate.Date, daysOfValidity);
 
         return new Product(
             ProductId.CreateUniquer(),
