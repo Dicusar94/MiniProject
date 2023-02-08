@@ -25,6 +25,8 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
             throw new InvalidOperationException($"{nameof(Product)} not found!");
 
         _productRepository.Delete(product);
+        _productRepository.SaveChanges();
+
         var result = _mapper.Map<ProductIdResult>(product.Id);
 
         return Task.FromResult(result);

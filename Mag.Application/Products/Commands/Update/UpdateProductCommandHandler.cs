@@ -30,6 +30,9 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             request.DaysOfValidity,
             request.ProductionDate);
 
+        _productRepository.Update(product);
+        _productRepository.SaveChanges();
+
         var result = _mapper.Map<ProductResult>(product);
 
         return Task.FromResult(result);

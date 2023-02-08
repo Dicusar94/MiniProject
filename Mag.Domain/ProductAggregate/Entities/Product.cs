@@ -5,10 +5,14 @@ namespace Mag.Domain.ProductAggregate.Entities;
 
 public sealed class Product : AggregateRoot<ProductId>
 {
-    public string Name { get; private set; }
-    public ProductAvailability Availability { get; set; }
-    public ProductPrice Pricing { get; set; }
-    public ProductDiscount Discount { get; private set; }
+    public string Name { get; private set; } = null!;
+    public ProductAvailability Availability { get; private set; } = null!;
+    public ProductPrice Pricing { get; private set; } = null!;
+    public ProductDiscount Discount { get; private set; } = null!;
+
+    private Product() : base(ProductId.CreateUniquer())
+    {
+    }
 
     private Product(
         ProductId id,

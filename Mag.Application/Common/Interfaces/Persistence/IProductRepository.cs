@@ -5,11 +5,12 @@ namespace Mag.Application.Common.Interfaces.Persistence;
 
 public interface IProductRepository
 {
-    List<Product> GetAll();
+    IEnumerable<Product> GetAll();
     Product? GetById(Guid id);
-    List<Product>? Filter(Func<Product, bool> predicate);
-    Product Add(Product entity);
-    void AddRange(IList<Product> products);
+    IEnumerable<Product> Filter(Func<Product, bool> predicate);
+    Task<Product> AddAsync(Product entity);
+    Task AddRangeAsync(IEnumerable<Product> products);
     Product Update(Product entity);
     ProductId Delete(Product entity);
+    void SaveChanges();
 }

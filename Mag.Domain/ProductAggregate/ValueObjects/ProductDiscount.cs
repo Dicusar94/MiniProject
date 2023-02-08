@@ -12,10 +12,14 @@ public sealed class ProductDiscount : ValueObject
     private readonly DateTime _twentyPercentDiscountDate;
     private readonly DateTime _fiftyPercentDiscountDate;
 
-    public double Percent { get; }
-    public bool IsTwentyPercent { get; }
-    public bool IsFiftyPercent { get; }
-    public bool IsOneHundredPercent { get; }
+    public double Percent { get; private set; }
+    public bool IsTwentyPercent { get; private set; }
+    public bool IsFiftyPercent { get; private set; }
+    public bool IsOneHundredPercent { get; private set; }
+
+    private ProductDiscount()
+    {
+    }
 
     private ProductDiscount(DateTime productionDate, int daysOfValidity)
     {

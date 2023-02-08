@@ -17,7 +17,7 @@ public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Produ
         _mapper = mapper;
     }
 
-    public Task<ProductResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
+    public async Task<ProductResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var product = request.ProductionDate is null
             ? Product.Create(
@@ -30,10 +30,11 @@ public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Produ
                 request.DaysOfValidity,
                 request.ProductionDate.Value);
 
-        _productRepository.Add(product);
+        await _productRepository.AddAsync(product);
+        _productRepository.SaveChanges();
 
         var result = _mapper.Map<ProductResult>(product);
 
-        return Task.FromResult(result);
+        return result;
     }
 }

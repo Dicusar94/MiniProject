@@ -11,6 +11,11 @@ public sealed class ProductId : ValueObject
         Value = value;
     }
 
+    public static ProductId Create(Guid id)
+    {
+        return new ProductId(id);
+    }
+
     public static ProductId CreateUniquer()
     {
         return new (Guid.NewGuid());

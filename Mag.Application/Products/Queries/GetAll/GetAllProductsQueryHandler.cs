@@ -19,13 +19,28 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, I
     public Task<IEnumerable<ProductResult>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         var products = _productRepository.GetAll()
+            .AsEnumerable()
             .Where(FilterName(request.Name))
             .Where(FilterDiscountPercent(request.DiscountFrom, request.DiscountTo))
-            .Where(FilterIsOneMonthReaming(request.IsOneMonthTillExpiration));
+            .Where(FilterIsOneMonthReaming(request.IsOneMonthTillExpiration))
+            .Where(FilterIsExpired(request.IsExpired));
 
         var result = products.Select(_mapper.Map<ProductResult>);
 
         return Task.FromResult(result);
+    }
+
+    private static Func<Product, bool> FilterIsExpired(bool? isExpired)
+    {
+        if (isExpired is null) return _ => true;
+
+        if (isExpired.Value)
+            return x => x.Availability.ExpirationDate < DateTime.UtcNow.Date;
+
+        if (!isExpired.Value)
+            return x => x.Availability.ExpirationDate > DateTime.UtcNow.Date;
+
+        return _ => true;
     }
 
     private static Func<Product, bool> FilterName(string? name)

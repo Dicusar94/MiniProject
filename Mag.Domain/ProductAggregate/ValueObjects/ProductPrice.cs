@@ -4,8 +4,12 @@ namespace Mag.Domain.ProductAggregate.ValueObjects;
 
 public sealed class ProductPrice : ValueObject
 {
-    public double Stock { get; }
-    public double Sale { get; }
+    public double Stock { get; private set;}
+    public double Sale { get; private set;}
+
+    private ProductPrice()
+    {
+    }
 
     private ProductPrice(double stock, double sale)
     {
