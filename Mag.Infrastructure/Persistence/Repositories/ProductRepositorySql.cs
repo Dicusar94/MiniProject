@@ -20,7 +20,7 @@ public class ProductRepositorySql :IProductRepository
 
     public Product? GetById(Guid id)
     {
-        return _context.Products.FirstOrDefault(x => x.Id.Value == id);
+        return _context.Products.AsEnumerable().FirstOrDefault(x => x.Id.Value == id);
     }
 
     public IEnumerable<Product> Filter(Func<Product, bool> predicate)
