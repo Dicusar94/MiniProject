@@ -53,7 +53,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, I
         return x =>
         {
             from ??= 0; to ??= 101;
-            return x.Discount.Percent >= from && x.Discount.Percent < to;
+            return x.GetDiscount().Percent >= from && x.GetDiscount().Percent < to;
         };
     }
 

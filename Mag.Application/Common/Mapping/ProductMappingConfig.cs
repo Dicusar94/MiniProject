@@ -8,6 +8,11 @@ public class ProductMappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Product, ProductResult>();
+        config.NewConfig<Product, ProductResult>()
+            .Map(dest => dest.Discount, src => src.GetDiscount())
+            .Map(dest => dest.Pricing.Sale,
+                src => src.Pricing.GetSalePrice(src.GetDiscount()))
+            .Map(dest => dest.Availability.RemainingDaysOfValidity, 
+                src => src.Availability.GetRemainingValidityDays(DateTime.UtcNow));
     }
 }

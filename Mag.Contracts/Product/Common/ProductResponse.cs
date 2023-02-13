@@ -13,7 +13,8 @@ public record ProductIdResponse(Guid Value);
 public record ProductAvailabilityResponse(
     DateTime ProductionDate,
     DateTime ExpirationDate,
-    int DaysOfValidity
+    int DaysOfValidity,
+    int RemainingDaysOfValidity
 );
 
 public record ProductPriceResponse(

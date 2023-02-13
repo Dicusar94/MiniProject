@@ -29,4 +29,9 @@ public sealed class ProductAvailability
             expirationDate,
             daysOfValidity);
     }
+
+    public int GetRemainingValidityDays(DateTime today)
+    {
+        return (int)(ExpirationDate.Date - today.ToUniversalTime().Date).TotalDays;
+    }
 }

@@ -8,7 +8,6 @@ public sealed class Product : AggregateRoot<ProductId>
     public string Name { get; private set; } = null!;
     public ProductAvailability Availability { get; private set; } = null!;
     public ProductPrice Pricing { get; private set; } = null!;
-    public ProductDiscount Discount { get; private set; } = null!;
 
     private Product() : base(ProductId.CreateUniquer())
     {
@@ -18,42 +17,44 @@ public sealed class Product : AggregateRoot<ProductId>
         ProductId id,
         string name,
         ProductAvailability availability,
-        ProductPrice pricing,
-        ProductDiscount discount)
+        ProductPrice pricing)
         : base(id)
     {
         Id = id;
         Name = name;
         Availability = availability;
         Pricing = pricing;
-        Discount = discount;
     }
 
     public static Product Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
     {
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
-        var discount = ProductDiscount.Create(prodDate.Date, daysOfValidity);
-        var pricing = ProductPrice.Create(stockPrice, discount);
+        var pricing = ProductPrice.Create(stockPrice);
         var availability = ProductAvailability.Create(prodDate.Date, daysOfValidity);
 
         return new Product(
             ProductId.CreateUniquer(),
             name,
             availability,
-            pricing,
-            discount);
+            pricing);
     }
 
     public void Update(string name, double stockPrice, int daysOfValidity, DateTime? productionDate)
     {
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
         var availability = ProductAvailability.Create(prodDate, daysOfValidity);
-        var discount = ProductDiscount.Create(prodDate, daysOfValidity);
-        var pricing = ProductPrice.Create(stockPrice, Discount);
+        var pricing = ProductPrice.Create(stockPrice);
 
         Name = name;
-        Discount = discount;
         Pricing = pricing;
         Availability = availability;
+    }
+
+    public ProductDiscount GetDiscount()
+    {
+        return ProductDiscount.Create(
+            Availability.ProductionDate,
+            Availability.DaysOfValidity,
+            DateTime.UtcNow);
     }
 }

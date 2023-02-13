@@ -30,7 +30,5 @@ public class ProductConfigurations : IEntityTypeConfiguration<Product>
         builder.OwnsOne(p => p.Availability);
 
         builder.OwnsOne(p => p.Pricing);
-
-        builder.OwnsOne(p => p.Discount);
     }
 }

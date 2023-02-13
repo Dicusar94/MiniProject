@@ -11,21 +11,23 @@ public sealed class ProductDiscount : ValueObject
     private readonly DateTime _expirationDate;
     private readonly DateTime _twentyPercentDiscountDate;
     private readonly DateTime _fiftyPercentDiscountDate;
+    private readonly DateTime _today;
 
-    public double Percent { get; private set; }
-    public bool IsTwentyPercent { get; private set; }
-    public bool IsFiftyPercent { get; private set; }
-    public bool IsOneHundredPercent { get; private set; }
+    public double Percent { get; }
+    public bool IsTwentyPercent { get; }
+    public bool IsFiftyPercent { get; }
+    public bool IsOneHundredPercent { get; }
 
     private ProductDiscount()
     {
     }
 
-    private ProductDiscount(DateTime productionDate, int daysOfValidity)
+    private ProductDiscount(DateTime productionDate, int daysOfValidity, DateTime today)
     {
         _expirationDate = productionDate.AddDays(daysOfValidity).Date;
         _twentyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.5).Date;
         _fiftyPercentDiscountDate = productionDate.AddDays(daysOfValidity * 0.75).Date;
+        _today = today;
 
         Percent = GetDiscountPercent();
         IsTwentyPercent = Percent == TwentyPercent;
@@ -33,14 +35,14 @@ public sealed class ProductDiscount : ValueObject
         IsOneHundredPercent = Percent == OneHundredPercent;
     }
 
-    public static ProductDiscount Create(DateTime productionDate, int daysOfValidity)
+    public static ProductDiscount Create(DateTime productionDate, int daysOfValidity, DateTime today)
     {
-        return new ProductDiscount(productionDate, daysOfValidity);
+        return new ProductDiscount(productionDate, daysOfValidity, today);
     }
 
     private double GetDiscountPercent()
     {
-        var today = DateTime.UtcNow.Date;
+        var today = _today.ToUniversalTime().Date;
 
         if (today >= _twentyPercentDiscountDate && today < _fiftyPercentDiscountDate)
             return TwentyPercent;
