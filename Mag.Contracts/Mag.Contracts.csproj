@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <Folder Include="Product\Request" />
-    <Folder Include="Product\Response" />
+    <Folder Include="Product\Request"/>
+    <Folder Include="Product\Response"/>
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.0"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.0"/>
+  </ItemGroup>
 </Project>
