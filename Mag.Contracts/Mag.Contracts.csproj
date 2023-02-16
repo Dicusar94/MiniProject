@@ -8,8 +8,4 @@
     <Folder Include="Product\Request"/>
     <Folder Include="Product\Response"/>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.5.0"/>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.0"/>
-  </ItemGroup>
 </Project>

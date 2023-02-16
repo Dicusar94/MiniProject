@@ -1,5 +1,7 @@
+using FluentValidation;
 using Mag.Api.Common.Errors;
 using Mag.Api.Common.Mapping;
+using Mag.Api.Common.Marker;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Mag.Api;
@@ -14,6 +16,7 @@ public static class DependencyInjection
         services.AddCustomCors("AllowAllOrigins");
         services.AddMappings();
         services.AddSingleton<ProblemDetailsFactory, MagProblemDetailsFactory>();
+        services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
 
         return services;
     }
