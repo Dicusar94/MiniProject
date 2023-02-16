@@ -1,4 +1,6 @@
+using Mag.Api.Common.Errors;
 using Mag.Api.Common.Mapping;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Mag.Api;
 
@@ -11,6 +13,7 @@ public static class DependencyInjection
         services.AddSwaggerGen();
         services.AddCustomCors("AllowAllOrigins");
         services.AddMappings();
+        services.AddSingleton<ProblemDetailsFactory, MagProblemDetailsFactory>();
 
         return services;
     }

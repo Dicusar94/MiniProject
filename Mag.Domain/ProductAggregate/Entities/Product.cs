@@ -1,3 +1,4 @@
+using ErrorOr;
 using Mag.Domain.Common.Models;
 using Mag.Domain.ProductAggregate.ValueObjects;
 
@@ -26,28 +27,38 @@ public sealed class Product : AggregateRoot<ProductId>
         Pricing = pricing;
     }
 
-    public static Product Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
+    public static ErrorOr<Product> Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
     {
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
+
         var pricing = ProductPrice.Create(stockPrice);
+        if (pricing.IsError) return pricing.Errors;
+
         var availability = ProductAvailability.Create(prodDate.Date, daysOfValidity);
+        if (availability.IsError) return availability.Errors;
 
         return new Product(
             ProductId.CreateUniquer(),
             name,
-            availability,
-            pricing);
+            availability.Value,
+            pricing.Value);
     }
 
-    public void Update(string name, double stockPrice, int daysOfValidity, DateTime? productionDate)
+    public ErrorOr<Updated> Update(string name, double stockPrice, int daysOfValidity, DateTime? productionDate)
     {
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
+
         var availability = ProductAvailability.Create(prodDate, daysOfValidity);
+        if (availability.IsError) return availability.Errors;
+
         var pricing = ProductPrice.Create(stockPrice);
+        if (pricing.IsError) return pricing.Errors;
 
         Name = name;
-        Pricing = pricing;
-        Availability = availability;
+        Pricing = pricing.Value;
+        Availability = availability.Value;
+
+        return Result.Updated;
     }
 
     public ProductDiscount GetDiscount()

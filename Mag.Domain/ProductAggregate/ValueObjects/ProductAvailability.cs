@@ -1,3 +1,6 @@
+using ErrorOr;
+using Mag.Domain.Common.Errors;
+
 namespace Mag.Domain.ProductAggregate.ValueObjects;
 
 public sealed class ProductAvailability
@@ -17,10 +20,12 @@ public sealed class ProductAvailability
         DaysOfValidity = daysOfValidity;
     }
 
-    public static ProductAvailability Create(DateTime productionDate, int daysOfValidity)
+    public static ErrorOr<ProductAvailability> Create(DateTime productionDate, int daysOfValidity)
     {
-        if (daysOfValidity < 0)
-            throw new InvalidOperationException($"{nameof(DaysOfValidity)} must be greater than 0");
+        if (daysOfValidity <= 0)
+        {
+            return Errors.Product.ProductAvailability.DaysOfValidity;
+        }
 
         var expirationDate = productionDate.AddDays(daysOfValidity).Date;
 

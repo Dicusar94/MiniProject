@@ -1,3 +1,4 @@
+using ErrorOr;
 using Mag.Application.Common.Interfaces.Persistence;
 using Mag.Application.Products.Common;
 using Mag.Domain.ProductAggregate.Entities;
@@ -6,7 +7,7 @@ using MediatR;
 
 namespace Mag.Application.Products.Commands.Create;
 
-public class AddProductCommandHandler : IRequestHandler<AddProductCommand, ProductResult>
+public class AddProductCommandHandler : IRequestHandler<AddProductCommand, ErrorOr<ProductResult>>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -17,7 +18,7 @@ public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Produ
         _mapper = mapper;
     }
 
-    public async Task<ProductResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProductResult>> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var product = request.ProductionDate is null
             ? Product.Create(
@@ -30,10 +31,12 @@ public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Produ
                 request.DaysOfValidity,
                 request.ProductionDate.Value);
 
-        await _productRepository.AddAsync(product);
+        if (product.IsError) return product.Errors;
+
+        await _productRepository.AddAsync(product.Value);
         _productRepository.SaveChanges();
 
-        var result = _mapper.Map<ProductResult>(product);
+        var result = _mapper.Map<ProductResult>(product.Value);
 
         return result;
     }

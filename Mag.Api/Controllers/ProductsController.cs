@@ -14,10 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mag.Api.Controllers;
 
 [Route("[controller]")]
-[ApiController]
-public class Products : BaseController
+public class ProductsController : ApiController
 {
-    public Products(IMediator mediator, IMapper mapper) : base(mediator, mapper)
+    public ProductsController(IMediator mediator, IMapper mapper) : base(mediator, mapper)
     {
     }
 
@@ -56,17 +55,13 @@ public class Products : BaseController
     [HttpPost]
     public async Task<IActionResult> Create(CreateProductRequest request)
     {
-        try
-        {
-            var command = Mapper.Map<AddProductCommand>(request);
-            var result = await Mediator.Send(command);
-            var response = Mapper.Map<ProductResponse>(result);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var command = Mapper.Map<AddProductCommand>(request);
+        var result = await Mediator.Send(command);
+
+        return result.Match(
+            createResult => Ok(Mapper.Map<ProductResponse>(result)),
+            errors => Problem(errors)
+        );
     }
 
     [HttpPut("{id}")]

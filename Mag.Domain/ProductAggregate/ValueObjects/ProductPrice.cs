@@ -1,4 +1,6 @@
+using ErrorOr;
 using Mag.Domain.Common.Models;
+using Mag.Domain.Common.Errors;
 
 namespace Mag.Domain.ProductAggregate.ValueObjects;
 
@@ -15,10 +17,12 @@ public sealed class ProductPrice : ValueObject
         Stock = stock;
     }
 
-    public static ProductPrice Create(double stockPrice)
+    public static ErrorOr<ProductPrice> Create(double stockPrice)
     {
-        if (stockPrice < 0)
-            throw new InvalidOperationException($"{nameof(Stock)} price must be greater thant 0");
+        if (stockPrice <= 0)
+        {
+            return Errors.Product.ProductPrice.StockPrice;
+        }
 
         return new ProductPrice(stockPrice);
     }

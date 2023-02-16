@@ -12,11 +12,11 @@ public class ProductRepository : IProductRepository
     {
         Products = new List<Product>
         {
-            Product.Create("20Discount", 10, 20, DateTime.UtcNow.AddDays(-11).Date),
-            Product.Create("50Discount", 14, 30, DateTime.UtcNow.AddDays(-25).Date),
-            Product.Create("0Price", 15, 40, DateTime.UtcNow.AddDays(-50).Date),
-            Product.Create("AtLeastOneMonthValidity", 16, 25),
-            Product.Create("Other2", 17, 60),
+            Product.Create("20Discount", 10, 20, DateTime.UtcNow.AddDays(-11).Date).Value,
+            Product.Create("50Discount", 14, 30, DateTime.UtcNow.AddDays(-25).Date).Value,
+            Product.Create("0Price", 15, 40, DateTime.UtcNow.AddDays(-50).Date).Value,
+            Product.Create("AtLeastOneMonthValidity", 16, 25).Value,
+            Product.Create("Other2", 17, 60).Value,
         };
     }
 
