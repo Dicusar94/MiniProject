@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using ErrorOr;
+using Mag.Api.Common.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -90,11 +92,13 @@ public class MagProblemDetailsFactory : ProblemDetailsFactory
             problemDetails.Extensions["traceId"] = traceId;
         }
 
-        // var errors = httpContext?.Items[HttpContextItemKeys.Errors] as List<Error>;
+        var errors = httpContext?.Items[HttpContextItemKeys.Errors] as List<Error>;
 
-        // if (errors is not null)
-        // {
-        //     problemDetails.Extensions.Add("errorCodes", errors.Select(e => e.Code));
-        // }
+        if (errors is not null)
+        {
+            var dictionary = new Dictionary<string, string[]>();
+            errors.ForEach(error => dictionary.Add(error.Code, new[] { error.Description }));
+            problemDetails.Extensions.Add("errors", dictionary);
+        }
     }
 }

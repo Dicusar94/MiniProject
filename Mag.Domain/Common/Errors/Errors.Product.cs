@@ -10,7 +10,7 @@ public static partial class Errors
         {
             public static Error DaysOfValidity => Error.Validation(
                 code: "Product.Availability.DaysOfValidity",
-                description: "must be greater than 0"
+                description: "must be greater than 0."
             );
         }
 
@@ -18,8 +18,13 @@ public static partial class Errors
         {
             public static Error StockPrice => Error.Validation(
                 code: "Product.Price.StockPrice",
-                description : "must be greater than 0"
+                description : "must be greater than 0."
             );
         }
+
+        public static Error NotFound => Error.NotFound(
+            code : "Product.NotFound",
+            description: "Product not found."
+        );
     }
 }

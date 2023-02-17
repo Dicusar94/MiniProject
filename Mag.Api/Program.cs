@@ -23,7 +23,7 @@ var app = builder.Build();
     }
 
     app.UseCors("AllowAllOrigins");
-    app.UseExceptionHandler("/errors");
+    app.UseExceptionHandler("/error");
     // app.UseHttpsRedirection();
     // app.UseAuthorization();
     app.MapControllers();

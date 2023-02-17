@@ -29,13 +29,17 @@ public sealed class Product : AggregateRoot<ProductId>
 
     public static ErrorOr<Product> Create(string name, double stockPrice, int daysOfValidity, DateTime? productionDate = default)
     {
+        var errors = new List<Error>();
+
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
 
-        var pricing = ProductPrice.Create(stockPrice);
-        if (pricing.IsError) return pricing.Errors;
+        var availability = ProductAvailability.Create(prodDate, daysOfValidity);
+        if (availability.IsError) errors.AddRange(availability.Errors);
 
-        var availability = ProductAvailability.Create(prodDate.Date, daysOfValidity);
-        if (availability.IsError) return availability.Errors;
+        var pricing = ProductPrice.Create(stockPrice);
+        if (pricing.IsError) errors.AddRange(pricing.Errors);
+
+        if(errors.Count > 0) return errors;
 
         return new Product(
             ProductId.CreateUniquer(),
@@ -46,13 +50,17 @@ public sealed class Product : AggregateRoot<ProductId>
 
     public ErrorOr<Updated> Update(string name, double stockPrice, int daysOfValidity, DateTime? productionDate)
     {
+        var errors = new List<Error>();
+
         var prodDate = productionDate ?? DateTime.UtcNow.Date;
 
         var availability = ProductAvailability.Create(prodDate, daysOfValidity);
-        if (availability.IsError) return availability.Errors;
+        if (availability.IsError) errors.AddRange(availability.Errors);
 
         var pricing = ProductPrice.Create(stockPrice);
-        if (pricing.IsError) return pricing.Errors;
+        if (pricing.IsError) errors.AddRange(pricing.Errors);
+
+        if(errors.Count > 0) return errors;
 
         Name = name;
         Pricing = pricing.Value;

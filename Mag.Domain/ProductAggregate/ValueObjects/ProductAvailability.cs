@@ -23,9 +23,7 @@ public sealed class ProductAvailability
     public static ErrorOr<ProductAvailability> Create(DateTime productionDate, int daysOfValidity)
     {
         if (daysOfValidity <= 0)
-        {
             return Errors.Product.ProductAvailability.DaysOfValidity;
-        }
 
         var expirationDate = productionDate.AddDays(daysOfValidity).Date;
 

@@ -39,17 +39,12 @@ public class ProductsController : ApiController
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        try
-        {
-            var query = new GetProductByIdQuery(id);
-            var result = await Mediator.Send(query);
-            var response = Mapper.Map<ProductResponse>(result);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var query = new GetProductByIdQuery(id);
+        var result = await Mediator.Send(query);
+        return result.Match(
+            productResult => Ok(Mapper.Map<ProductResponse>(result)),
+            errors => Problem(errors)
+        );
     }
 
     [HttpPost]
@@ -59,7 +54,7 @@ public class ProductsController : ApiController
         var result = await Mediator.Send(command);
 
         return result.Match(
-            createResult => Ok(Mapper.Map<ProductResponse>(result)),
+            createResult => Ok(Mapper.Map<ProductResponse>(createResult)),
             errors => Problem(errors)
         );
     }
